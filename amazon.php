@@ -66,7 +66,7 @@ if ($handle) {
 		$linea++;
 		echo "Linea:{$linea}".$lb; 
 		file_put_contents("./amazon.tmp", $linea);
-		for ($i=1; $i < 2 ; $i++) { 
+		for ($i=1; $i < 401 ; $i++) { 
 			$url = str_replace('{{pagina}}', $i, $line);
 			process($line);
 		}
