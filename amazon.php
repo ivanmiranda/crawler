@@ -68,7 +68,7 @@ if ($handle) {
 		file_put_contents("./amazon.tmp", $linea);
 		for ($i=1; $i < 401 ; $i++) { 
 			$url = str_replace('{{pagina}}', $i, $line);
-			process($line);
+			process($url);
 		}
 		if (PHP_SAPI == "cli") $lb = "\n"; 
 		else $lb = "<br />"; 
