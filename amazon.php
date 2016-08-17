@@ -19,7 +19,7 @@ function process($url) {
 	if($dom = str_get_html(getContent($url))) {
 		if (PHP_SAPI == "cli") $lb = "\n"; 
 		else $lb = "<br />"; 
-		echo "--> {$url}".$lb; 
+		//echo "--> {$url}".$lb; 
 	    foreach ($dom->find('div[class=s-item-container]') as $item) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
@@ -67,14 +67,14 @@ $linea = 0;
 if ($handle) {
 	while (($line = fgets($handle)) !== false) {
 		$linea++;
-		echo "Linea:{$linea}".$lb; 
+		if (PHP_SAPI == "cli") $lb = "\n"; 
+		else $lb = "<br />"; 
+		//echo "Linea:{$linea}".$lb; 
 		file_put_contents("./amazon.tmp", $linea);
 		for ($i=1; $i < 401 ; $i++) { 
 			$url = str_replace('{{pagina}}', $i, $line);
 			process($url);
 		}
-		if (PHP_SAPI == "cli") $lb = "\n"; 
-		else $lb = "<br />"; 
 	}
 }
 fclose($handle);
