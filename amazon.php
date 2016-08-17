@@ -23,34 +23,37 @@ function process($url) {
 	    foreach ($dom->find('div[class=s-item-container]') as $item) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
-	      		$details = str_get_html(getContent($url->attr['href']));
-	      		$book = [];
-				foreach($details->find('span[id=productTitle]') as $data) {
-					$book['title'] = trim(html_entity_decode($data->innertext));
-				}
-				foreach($details->find('span[class=author]') as $data) {
-					foreach ($data->find('a') as $extra) {
-						$autor .= trim(str_replace(","," ",str_replace("<b>", "", html_entity_decode($extra->innertext))))." , ";
+	      		if($details = str_get_html(getContent($url->attr['href']))) {
+		      		$book = [];
+					foreach($details->find('span[id=productTitle]') as $data) {
+						$book['title'] = trim(html_entity_decode($data->innertext));
 					}
-				}
-				$book['author'] = $autor;
-				foreach($details->find('span[class=a-size-medium a-color-price offer-price a-text-normal]') as $data) {
-					$book['price'] = trim(str_replace('$', '', html_entity_decode($data->innertext)));
-				}
-				foreach($details->find('td[class=bucket]') as $data) {
-					foreach ($data->find('li') as $extra) {
-						if(strstr($extra->innertext, 'ISBN-10')){
-							$book['isbn10'] = trim(str_replace('<b>ISBN-10:</b>', '', html_entity_decode($extra->innertext)));
-						}
-						if(strstr($extra->innertext, 'ISBN-13')){
-							$book['isbn13'] = trim(str_replace('<b>ISBN-13:</b>', '', html_entity_decode($extra->innertext)));
-						}
-						if(strstr($extra->innertext, 'Editor')){
-							$book['publisher'] = trim(str_replace('<b>Editor:</b>', '', html_entity_decode($extra->innertext)));
+					foreach($details->find('span[class=author]') as $data) {
+						foreach ($data->find('a') as $extra) {
+							$autor .= trim(str_replace(","," ",str_replace("<b>", "", html_entity_decode($extra->innertext))))." , ";
 						}
 					}
+					$book['author'] = $autor;
+					foreach($details->find('span[class=a-size-medium a-color-price offer-price a-text-normal]') as $data) {
+						$book['price'] = trim(str_replace('$', '', html_entity_decode($data->innertext)));
+					}
+					foreach($details->find('td[class=bucket]') as $data) {
+						foreach ($data->find('li') as $extra) {
+							if(strstr($extra->innertext, 'ISBN-10')){
+								$book['isbn10'] = trim(str_replace('<b>ISBN-10:</b>', '', html_entity_decode($extra->innertext)));
+							}
+							if(strstr($extra->innertext, 'ISBN-13')){
+								$book['isbn13'] = trim(str_replace('<b>ISBN-13:</b>', '', html_entity_decode($extra->innertext)));
+							}
+							if(strstr($extra->innertext, 'Editor')){
+								$book['publisher'] = trim(str_replace('<b>Editor:</b>', '', html_entity_decode($extra->innertext)));
+							}
+						}
+					}
+		      		file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
+	      		}  else {
+					file_put_contents("./amazon_pendientes.txt",$pagina->url."\n", FILE_APPEND);
 				}
-	      		file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
 	      	}
 	    }
 	} else {
