@@ -4,30 +4,35 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 include("./crawler.php");
 
-$find = ['div[class=s-item-container]','a[class=a-link-normal s-access-detail-page  a-text-normal]'];
+class Amazon extends Crawler {
+	public function procesaPagina($url) {
+		$pageContent = $this->getDom($url);
+		if ($pageContent) {
+			$books = $this->getTags('a[class=a-link-normal s-access-detail-page  a-text-normal]', $pageContent);
+			foreach ($books as $book) {
+				$this->procesaLibro(html_entity_decode($book->attr['href']));
+			}
+		}
+	}
 
-$crawl = new Crawler();
-$pageContent = $crawl->getDom('https://www.amazon.com.mx/s/ref=sr_pg_2?fst=as%3Aoff&rh=n%3A9298576011%2Cp_n_feature_ten_browse-bin%3A9775230011%2Cn%3A%219298577011%2Cn%3A9535742011%2Cp_n_feature_browse-bin%3A9590861011%2Cn%3A9535826011&page=2&bbn=9535742011&ie=UTF8&qid=1471538975');
-if ($pageContent) {
-	$books = $crawl->getTags('a[class=a-link-normal s-access-detail-page  a-text-normal]', $pageContent);
-	foreach ($books as $book) {
+	public function procesaLibro($url) {
 		$author = '';
-		$bookContent = $crawl->getDom(html_entity_decode($book->attr['href']));
+		$bookContent = $this->getDom($url);
 		if ($bookContent) {
 			$bookData = [];
-			foreach($bookContent->find('span[id=productTitle]') as $data) {
+			foreach ($bookContent->find('span[id=productTitle]') as $data) {
 				$bookData['title'] = trim(html_entity_decode($data->innertext));
 			}
-			foreach($bookContent->find('span[class=author]') as $data) {
+			foreach ($bookContent->find('span[class=author]') as $data) {
 				foreach ($data->find('a') as $extra) {
 					$author .= trim(str_replace(","," ",str_replace("<b>", "", html_entity_decode($extra->innertext))))." , ";
 				}
 			}
 			$bookData['author'] = $author;
-			foreach($bookContent->find('span[class=a-size-medium a-color-price offer-price a-text-normal]') as $data) {
+			foreach ($bookContent->find('span[class=a-size-medium a-color-price offer-price a-text-normal]') as $data) {
 				$bookData['price'] = trim(str_replace('$', '', html_entity_decode($data->innertext)));
 			}
-			foreach($bookContent->find('td[class=bucket]') as $data) {
+			foreach ($bookContent->find('td[class=bucket]') as $data) {
 				foreach ($data->find('li') as $extra) {
 					if(strstr($extra->innertext, 'ISBN-10')){
 						$bookData['isbn10'] = trim(str_replace('<b>ISBN-10:</b>', '', html_entity_decode($extra->innertext)));
@@ -47,4 +52,33 @@ if ($pageContent) {
 			}
 		}
 	}
+}
+
+$crawl = new Amazon();
+
+$archivoLigas = "./amazon_ligas.txt";
+$archivoPendientes = "./amazon_pendientes.txt";
+while(file_exists($archivoLigas)) {
+	$handle = fopen($archivoLigas, "r");
+	if ($handle) {
+		while (($lineUrl = fgets($handle)) !== false) {
+			if (strlen(trim($lineUrl)) > 0) {
+				if (strpos($lineUrl,'{{pagina}}')) {
+					for ($i=1; $i < 401 ; $i++) { 
+						$url = str_replace('{{pagina}}', $i, $lineUrl);
+						$crawl->procesaPagina(html_entity_decode($url));
+					}
+				} else {
+					if (strpos($lineUrl,'ref=sr_pg')) {
+						$crawl->procesaPagina(html_entity_decode($lineUrl));
+					} else {
+						$crawl->procesaLibro(html_entity_decode($lineUrl));
+					}
+				}
+			}
+		}
+	}
+	fclose($handle);
+	unlink($archivoLigas);
+	rename($archivoPendientes, $archivoLigas);
 }
