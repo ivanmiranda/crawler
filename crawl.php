@@ -66,6 +66,7 @@ while(file_exists($archivoLigas)) {
 				for ($i=1; $i < 401 ; $i++) {
 					$url = str_replace('{{pagina}}', $i, $lineUrl);
 					$crawl->procesaPagina(html_entity_decode($url));
+					flush();
 				}
 			} else {
 				if (strpos($lineUrl,'ref=sr_pg')) {
@@ -73,8 +74,10 @@ while(file_exists($archivoLigas)) {
 				} else {
 					$crawl->procesaLibro(html_entity_decode($lineUrl));
 				}
+				flush();
 			}
 		}
+		flush();
 	}
 	fclose($handle);
 	unlink($archivoLigas);
