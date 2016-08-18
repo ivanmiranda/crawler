@@ -19,13 +19,12 @@ function process($url) {
 	$content = getContent($url);
 	$dom = str_get_html($content);
 	file_put_contents("./amazon_procesadas.txt", $url . " :: " . strlen(trim($content)) . "\n", FILE_APPEND);
-	if (trim($content) != '') {
+	if (strlen(trim($content)) != 4821) {
 	    foreach ($dom->find('div[class=s-item-container]') as $item) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
 	      		$content = getContent($url->attr['href']);
-	      		$details = str_get_html($content);
-	      		if (trim($content) != '') {
+	      		if ($details = str_get_html($content)) {
 		      		$book = [];
 					foreach($details->find('span[id=productTitle]') as $data) {
 						$book['title'] = trim(html_entity_decode($data->innertext));
@@ -55,9 +54,7 @@ function process($url) {
 					if (isset($book['title'])) {
 		      			file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
 					}
-	      		}  else {
-					file_put_contents("./amazon_pendientes.txt",$url->attr['href']."\n", FILE_APPEND);
-				}
+	      		}
 	      	}
 	    }
 	} else {
