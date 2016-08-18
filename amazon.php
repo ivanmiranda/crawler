@@ -79,7 +79,7 @@ if ($handle) {
 				processPage($url);
 			}
 		} else {
-			processPage($lineUrl);
+			processBook($lineUrl);
 		}
 	}
 }
