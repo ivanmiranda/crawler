@@ -57,8 +57,10 @@ function processBook($url) {
 
 function processPage($url) {
 	$contentPage = getContent($url);
+	if(($dom = str_get_html($contentPage)) === false) {
+		return false;
+	}
 	echo 'PAGE::' . $url;
-	$dom = str_get_html($contentPage);
 	if (strlen(trim($contentPage)) != 4821) {
 		foreach ($dom->find('div[class=s-item-container]') as $item) {
 			$autor = '';
