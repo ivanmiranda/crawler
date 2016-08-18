@@ -4,6 +4,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 include("./crawler.php");
 
+error_reporting(E_ERROR | E_PARSE);
+set_time_limit(50000); 
+
 class Amazon extends Crawler {
 	public function procesaPagina($url) {
 		$pageContent = $this->getDom($url);
@@ -65,13 +68,16 @@ while(file_exists($archivoLigas)) {
 			if (strpos($lineUrl,'{{pagina}}')) {
 				for ($i=1; $i < 401 ; $i++) {
 					$url = str_replace('{{pagina}}', $i, $lineUrl);
+					// echo $url . "<br>";
 					$crawl->procesaPagina(html_entity_decode($url));
 					flush();
 				}
 			} else {
 				if (strpos($lineUrl,'ref=sr_pg')) {
+					// echo $lineUrl . "<br>";
 					$crawl->procesaPagina(html_entity_decode($lineUrl));
 				} else {
+					// echo $lineUrl . "<br>";
 					$crawl->procesaLibro(html_entity_decode($lineUrl));
 				}
 				flush();
@@ -80,8 +86,8 @@ while(file_exists($archivoLigas)) {
 		flush();
 	}
 	fclose($handle);
-	unlink($archivoLigas);
 	if (file_exists($archivoPendientes)) {
+		unlink($archivoLigas);
 		rename($archivoPendientes, $archivoLigas);
 	}
 }
