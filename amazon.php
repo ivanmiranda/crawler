@@ -61,12 +61,12 @@ function processPage($url) {
 		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
 		return false;
 	}
-	echo 'PAGE::' . $url;
+	echo 'BOOK::' . $url . '::' . strlen(trim($contentPage)) . "\n";
 	if (strlen(trim($contentPage)) != 4821) {
 		foreach ($dom->find('div[class=s-item-container]') as $item) {
 			$autor = '';
 			foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $urlBook) {
-				processBook(urldecode(html_entity_decode($urlBook->attr['href'])));
+				processBook(html_entity_decode($urlBook->attr['href']));
 			}
 		}
 	} else {
@@ -83,13 +83,13 @@ if ($handle) {
 		if(strpos($lineUrl,'{{pagina}}')) {
 			for ($i=1; $i < 401 ; $i++) { 
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
-				processPage(urldecode(html_entity_decode($url)));
+				processPage(html_entity_decode($url));
 			}
 		} else {
 			if(strpos($lineUrl,'ref=sr_pg')) {
-				processPage(urldecode(html_entity_decode($lineUrl)));
+				processPage(html_entity_decode($lineUrl));
 			} else {
-				processBook(urldecode(html_entity_decode($lineUrl)));
+				processBook(html_entity_decode($lineUrl));
 			}
 		}
 	}
