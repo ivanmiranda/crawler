@@ -17,7 +17,7 @@ function getContent($url) {
 
 function processBook($url) {
 	$contentBook = getContent($url);
-	echo 'BOOK::' . $url . '::' . strlen(trim($contentBook)) . "\n";
+	echo 'BOOK::' . html_entity_decode($url) . '::' . strlen(trim($contentBook)) . "\n";
 	if ($details = str_get_html($contentBook)) {
 		$book = [];
 		foreach($details->find('span[id=productTitle]') as $data) {
