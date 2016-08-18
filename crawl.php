@@ -58,7 +58,7 @@ $crawl = new Amazon();
 
 $archivoLigas = "./amazon_ligas.txt";
 $archivoPendientes = "./amazon_pendientes.txt";
-// while(file_exists($archivoLigas)) {
+while(file_exists($archivoLigas)) {
 	$handle = fopen($archivoLigas, "r");
 	while (($lineUrl = fgets($handle)) !== false) {
 		if (strlen(trim($lineUrl)) > 0) {
@@ -80,6 +80,8 @@ $archivoPendientes = "./amazon_pendientes.txt";
 		flush();
 	}
 	fclose($handle);
-	// unlink($archivoLigas);
-	// rename($archivoPendientes, $archivoLigas);
-// }
+	unlink($archivoLigas);
+	if (file_exists($archivoPendientes)) {
+		rename($archivoPendientes, $archivoLigas);
+	}
+}
