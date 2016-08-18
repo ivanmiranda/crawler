@@ -80,7 +80,7 @@ if ($handle) {
 				//processPage($url);
 			}
 		} else {
-			echo "book " . $url . "\n";
+			echo "book " . $lineUrl . "\n";
 			//processBook($lineUrl);
 		}
 	}
