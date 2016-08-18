@@ -6,7 +6,7 @@ include("./simple_html_dom.php");
 
 function getContent($url) {
 	$ch = curl_init();
-	$timeout = 300;
+	$timeout = 50;
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -73,9 +73,6 @@ $linea = 0;
 if ($handle) {
 	while (($lineUrl = fgets($handle)) !== false) {
 		$linea++;
-		// if (PHP_SAPI == "cli") $lb = "\n"; 
-		// else $lb = "<br />"; 
-		// file_put_contents("./amazon.tmp", $linea);
 		for ($i=1; $i < 401 ; $i++) { 
 			if(strpos($lineUrl, '{{pagina}}')) {
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
