@@ -81,7 +81,7 @@ function processPage($url) {
 
 $archivoLigas = "./amazon_ligas.txt";
 $archivoPendientes = "./amazon_pendientes.txt";
-//while(file_exists($archivoLigas)) {
+while(file_exists($archivoLigas)) {
 	$handle = fopen($archivoLigas, "r");
 	if ($handle) {
 		while (($lineUrl = fgets($handle)) !== false) {
@@ -102,6 +102,6 @@ $archivoPendientes = "./amazon_pendientes.txt";
 		}
 	}
 	fclose($handle);
-	//unlink($archivoLigas);
-	//rename($archivoPendientes, $archivoLigas);
-//}
+	unlink($archivoLigas);
+	rename($archivoPendientes, $archivoLigas);
+}
