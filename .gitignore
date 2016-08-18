@@ -1,0 +1,6 @@
+amazon.json
+*.tmp
+*.txt
+vendor/
+composer.lock
+cache/
