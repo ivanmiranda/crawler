@@ -16,13 +16,16 @@ function getContent($url) {
 }
 
 function process($url) {
-	if($dom = str_get_html(getContent($url))) {
+	$content = getContent($url);
+	$dom = str_get_html($content);
+	file_put_contents("./amazon_procesadas.txt",$url."\n", FILE_APPEND);
+	if (trim($content) != '') {
 	    foreach ($dom->find('div[class=s-item-container]') as $item) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
 	      		$content = getContent($url->attr['href']);
 	      		$details = str_get_html($content);
-	      		if(trim($content) != '') {
+	      		if (trim($content) != '') {
 		      		$book = [];
 					foreach($details->find('span[id=productTitle]') as $data) {
 						$book['title'] = trim(html_entity_decode($data->innertext));
