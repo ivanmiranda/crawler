@@ -81,16 +81,18 @@ $linea = 0;
 if ($handle) {
 	while (($lineUrl = fgets($handle)) !== false) {
 		$linea++;
-		if(strpos($lineUrl,'{{pagina}}')) {
-			for ($i=1; $i < 401 ; $i++) { 
-				$url = str_replace('{{pagina}}', $i, $lineUrl);
-				processPage(html_entity_decode($url));
-			}
-		} else {
-			if(strpos($lineUrl,'ref=sr_pg')) {
-				processPage(html_entity_decode($lineUrl));
+		if (strlen(trim($lineUrl)) > 0) {
+			if (strpos($lineUrl,'{{pagina}}')) {
+				for ($i=1; $i < 401 ; $i++) { 
+					$url = str_replace('{{pagina}}', $i, $lineUrl);
+					processPage(html_entity_decode($url));
+				}
 			} else {
-				processBook(html_entity_decode($lineUrl));
+				if (strpos($lineUrl,'ref=sr_pg')) {
+					processPage(html_entity_decode($lineUrl));
+				} else {
+					processBook(html_entity_decode($lineUrl));
+				}
 			}
 		}
 	}
