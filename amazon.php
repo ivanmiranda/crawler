@@ -101,7 +101,7 @@ while(file_exists($archivoLigas)) {
 			}
 		}
 	}
+	fclose($handle);
+	unlink($archivoLigas);
+	rename($archivoPendientes, $archivoLigas);
 }
-fclose($handle);
-unlink($archivoLigas);
-rename($archivoPendientes, $archivoLigas);

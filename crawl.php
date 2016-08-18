@@ -60,20 +60,18 @@ $archivoLigas = "./amazon_ligas.txt";
 $archivoPendientes = "./amazon_pendientes.txt";
 while(file_exists($archivoLigas)) {
 	$handle = fopen($archivoLigas, "r");
-	if ($handle) {
-		while (($lineUrl = fgets($handle)) !== false) {
-			if (strlen(trim($lineUrl)) > 0) {
-				if (strpos($lineUrl,'{{pagina}}')) {
-					for ($i=1; $i < 401 ; $i++) { 
-						$url = str_replace('{{pagina}}', $i, $lineUrl);
-						$crawl->procesaPagina(html_entity_decode($url));
-					}
+	while (($lineUrl = fgets($handle)) !== false) {
+		if (strlen(trim($lineUrl)) > 0) {
+			if (strpos($lineUrl,'{{pagina}}')) {
+				for ($i=1; $i < 401 ; $i++) {
+					$url = str_replace('{{pagina}}', $i, $lineUrl);
+					$crawl->procesaPagina(html_entity_decode($url));
+				}
+			} else {
+				if (strpos($lineUrl,'ref=sr_pg')) {
+					$crawl->procesaPagina(html_entity_decode($lineUrl));
 				} else {
-					if (strpos($lineUrl,'ref=sr_pg')) {
-						$crawl->procesaPagina(html_entity_decode($lineUrl));
-					} else {
-						$crawl->procesaLibro(html_entity_decode($lineUrl));
-					}
+					$crawl->procesaLibro(html_entity_decode($lineUrl));
 				}
 			}
 		}
