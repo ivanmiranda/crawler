@@ -17,7 +17,7 @@ function getContent($url) {
 
 function processBook($url) {
 	$contentBook = getContent($url);
-	echo 'BOOK::' . urldecode(html_entity_decode($url)) . '::' . strlen(trim($contentBook)) . "\n";
+	echo 'BOOK::' . $url . '::' . strlen(trim($contentBook)) . "\n";
 	if ($details = str_get_html($contentBook)) {
 		$book = [];
 		foreach($details->find('span[id=productTitle]') as $data) {
@@ -83,13 +83,13 @@ if ($handle) {
 		if(strpos($lineUrl,'{{pagina}}')) {
 			for ($i=1; $i < 401 ; $i++) { 
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
-				processPage($url);
+				processPage(urldecode(html_entity_decode($url)));
 			}
 		} else {
 			if(strpos($lineUrl,'ref=sr_pg')) {
-				processPage($lineUrl);
+				processPage(urldecode(html_entity_decode($lineUrl)));
 			} else {
-				processBook($lineUrl);
+				processBook(urldecode(html_entity_decode($lineUrl)));
 			}
 		}
 	}
