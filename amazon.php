@@ -21,7 +21,7 @@ function process($url) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
 	      		$details = str_get_html(getContent($url->attr['href']))
-	      		if(trim($details != '')) {
+	      		if(trim($details) != '') {
 		      		$book = [];
 					foreach($details->find('span[id=productTitle]') as $data) {
 						$book['title'] = trim(html_entity_decode($data->innertext));
