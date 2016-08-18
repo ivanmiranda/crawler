@@ -8,14 +8,15 @@ include("./simple_html_dom.php");
 class Crawler extends \stdClass {
 
 	public function getContent($url) {
-		// $adapter = new File('./cache');
-		// $adapter->setOption('ttl', 18000);
-		// $cache = new Cache($adapter);
-		// $urlHash = md5($url);
-		// $cachedPage = $cache->get($urlHash);
-		// if (!is_null($cachedPage)) {
-		// 	return unserialize($cachedPage);
-		// }
+		$adapter = new File('./cache');
+		$adapter->setOption('ttl', 18000);
+		$cache = new Cache($adapter);
+		$urlHash = md5($url);
+		$cachedPage = $cache->get($urlHash);
+		if (!is_null($cachedPage)) {
+			return unserialize($cachedPage);
+		}
+
 		$try = 1;
 		$output = [];
 		while($try < 6) {
@@ -45,9 +46,9 @@ class Crawler extends \stdClass {
 				$try = 6;
 			}
 		}
-		// if (strlen(trim($output['html']))) {
-		// 	$cache->set($urlHash, serialize($output));
-		// }
+		if (strlen(trim($output['html']))) {
+			$cache->set($urlHash, serialize($output));
+		}
 		return $output;
 	}
 
