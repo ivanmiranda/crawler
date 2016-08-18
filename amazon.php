@@ -52,12 +52,12 @@ function process($url) {
 		      			file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
 					}
 	      		}  else {
-					file_put_contents("./amazon_pendientes.txt",$pagina->url."\n", FILE_APPEND);
+					file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
 				}
 	      	}
 	    }
 	} else {
-		file_put_contents("./amazon_pendientes.txt",$pagina->url."\n", FILE_APPEND);
+		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
 	}
 	flush();
 }
