@@ -73,9 +73,9 @@ $linea = 0;
 if ($handle) {
 	while (($lineUrl = fgets($handle)) !== false) {
 		$linea++;
-		if (PHP_SAPI == "cli") $lb = "\n"; 
-		else $lb = "<br />"; 
-		file_put_contents("./amazon.tmp", $linea);
+		// if (PHP_SAPI == "cli") $lb = "\n"; 
+		// else $lb = "<br />"; 
+		// file_put_contents("./amazon.tmp", $linea);
 		for ($i=1; $i < 401 ; $i++) { 
 			if(strpos($lineUrl, '{{pagina}}')) {
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
