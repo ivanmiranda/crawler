@@ -6,7 +6,7 @@ include("./simple_html_dom.php");
 
 function getContent($url) {
 	$ch = curl_init();
-	$timeout = 50;
+	$timeout = 100;
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -59,6 +59,9 @@ function processBook($url) {
 
 function processPage($url) {
 	$contentPage = getContent($url);
+	if (strlen(trim($contentBook)) == 0) {
+		$contentBook = trim(file_get_contents($url));
+	}
 	if(($dom = str_get_html($contentPage)) === false) {
 		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
 		return false;
