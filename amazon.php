@@ -73,13 +73,13 @@ $linea = 0;
 if ($handle) {
 	while (($lineUrl = fgets($handle)) !== false) {
 		$linea++;
-		for ($i=1; $i < 401 ; $i++) { 
-			if(strpos($lineUrl, '{{pagina}}')) {
+		if(strpos($lineUrl, '{{pagina}}')) {
+			for ($i=1; $i < 401 ; $i++) { 
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
 				processPage($url);
-			} else {
-				processPage($lineUrl);
 			}
+		} else {
+			processPage($lineUrl);
 		}
 	}
 }
