@@ -49,6 +49,8 @@ function processBook($url) {
 		} else {
 			file_put_contents("./amazon_pendientes.txt", $url . "\n", FILE_APPEND);
 		}
+	} else {
+		file_put_contents("./amazon_pendientes.txt", $url . "\n", FILE_APPEND);
 	}
 }
 
@@ -76,11 +78,9 @@ if ($handle) {
 		if(strpos($lineUrl,'{{pagina}}')) {
 			for ($i=1; $i < 401 ; $i++) { 
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
-				echo "page " . $url . "\n";
 				processPage($url);
 			}
 		} else {
-			echo "book " . $lineUrl . "\n";
 			processBook($lineUrl);
 		}
 	}
