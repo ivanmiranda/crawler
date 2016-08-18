@@ -17,8 +17,9 @@ function getContent($url) {
 
 function processBook($url) {
 	$contentBook = getContent($url);
-	echo 'BOOK::' . $url . '::' . strlen(trim($contentBook)) . "\n";
-	echo 'BOOK::' . $url . '::' . strlen(trim(file_get_contents($url))) . "\n";
+	if (strlen(trim($contentBook)) == 0) {
+		$contentBook = trim(file_get_contents($url));
+	}
 	if ($details = str_get_html($contentBook)) {
 		$book = [];
 		foreach($details->find('span[id=productTitle]') as $data) {
@@ -62,7 +63,6 @@ function processPage($url) {
 		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
 		return false;
 	}
-	echo 'BOOK::' . $url . '::' . strlen(trim($contentPage)) . "\n";
 	if (strlen(trim($contentPage)) != 4821) {
 		foreach ($dom->find('div[class=s-item-container]') as $item) {
 			$autor = '';
