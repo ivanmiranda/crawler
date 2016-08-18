@@ -24,6 +24,7 @@ function process($url) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
 	      		$content = getContent($url->attr['href']);
+	      		file_put_contents("./amazon_procesadas.txt", $url . " :: " . strlen(trim($content)) . "\n", FILE_APPEND);
 	      		if ($details = str_get_html($content)) {
 		      		$book = [];
 					foreach($details->find('span[id=productTitle]') as $data) {
