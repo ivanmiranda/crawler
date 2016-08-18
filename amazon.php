@@ -16,6 +16,7 @@ function getContent($url) {
 }
 
 function processBook($url) {
+	echo 'BOOK::' . $url;
 	$contentBook = getContent($url);
 	if ($details = str_get_html($contentBook)) {
 		$book = [];
@@ -56,6 +57,7 @@ function processBook($url) {
 
 function processPage($url) {
 	$contentPage = getContent($url);
+	echo 'PAGE::' . $url;
 	$dom = str_get_html($contentPage);
 	if (strlen(trim($contentPage)) != 4821) {
 		foreach ($dom->find('div[class=s-item-container]') as $item) {
