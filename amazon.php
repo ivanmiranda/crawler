@@ -18,7 +18,7 @@ function getContent($url) {
 function process($url) {
 	$content = getContent($url);
 	$dom = str_get_html($content);
-	file_put_contents("./amazon_procesadas.txt :: " . $url . " :: " . strlen(trim($content)) . "\n", FILE_APPEND);
+	file_put_contents("./amazon_procesadas.txt", $url . " :: " . strlen(trim($content)) . "\n", FILE_APPEND);
 	if (trim($content) != '') {
 	    foreach ($dom->find('div[class=s-item-container]') as $item) {
 	      	$autor = '';
