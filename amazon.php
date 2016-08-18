@@ -81,7 +81,11 @@ if ($handle) {
 				processPage($url);
 			}
 		} else {
-			processBook($lineUrl);
+			if(strpos($lineUrl,'ref=sr_pg')) {
+				processPage($lineUrl);
+			} else {
+				processBook($lineUrl);
+			}
 		}
 	}
 }
