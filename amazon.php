@@ -6,7 +6,7 @@ include("simple_html_dom.php");
 
 function getContent($url) {
 	$ch = curl_init();
-	$timeout = 50;
+	$timeout = 100;
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -18,15 +18,15 @@ function getContent($url) {
 function process($_url) {
 	$contentPage = getContent($_url);
 	$dom = str_get_html($contentPage);
-	file_put_contents("./amazon_procesadas.txt", $_url . " :: " . strlen(trim($contentPage)) . "\n", FILE_APPEND);
+	// file_put_contents("./amazon_procesadas.txt", $_url . " :: " . strlen(trim($contentPage)) . "\n", FILE_APPEND);
 	if (strlen(trim($contentPage)) != 4821) {
-	    foreach ($dom->find('div[class=s-item-container]') as $item) {
-	      	$autor = '';
-	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
-	      		$contentBook = getContent($url->attr['href']);
-	      		file_put_contents("./amazon_procesadas.txt", $url->attr['href'] . " :: " . strlen(trim($contentBook)) . "\n", FILE_APPEND);
-	      		if ($details = str_get_html($contentBook)) {
-		      		$book = [];
+		foreach ($dom->find('div[class=s-item-container]') as $item) {
+			$autor = '';
+			foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
+				$contentBook = getContent($url->attr['href']);
+				// file_put_contents("./amazon_procesadas.txt", $url->attr['href'] . " :: " . strlen(trim($contentBook)) . "\n", FILE_APPEND);
+				if ($details = str_get_html($contentBook)) {
+					$book = [];
 					foreach($details->find('span[id=productTitle]') as $data) {
 						$book['title'] = trim(html_entity_decode($data->innertext));
 					}
@@ -53,11 +53,13 @@ function process($_url) {
 						}
 					}
 					if (isset($book['title'])) {
-		      			file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
+							file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
+					} else {
+						file_put_contents("./amazon_pendientes.txt", $url->attr['href'] . "\n", FILE_APPEND);
 					}
-	      		}
-	      	}
-	    }
+				}
+			}
+		}
 	} else {
 		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
 	}
