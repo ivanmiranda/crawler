@@ -66,7 +66,7 @@ function processPage($url) {
 		foreach ($dom->find('div[class=s-item-container]') as $item) {
 			$autor = '';
 			foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $urlBook) {
-				processBook($urlBook->attr['href']);
+				processBook(urldecode(html_entity_decode($urlBook->attr['href'])));
 			}
 		}
 	} else {
