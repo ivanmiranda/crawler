@@ -77,11 +77,11 @@ if ($handle) {
 			for ($i=1; $i < 401 ; $i++) { 
 				$url = str_replace('{{pagina}}', $i, $lineUrl);
 				echo "page " . $url . "\n";
-				//processPage($url);
+				processPage($url);
 			}
 		} else {
 			echo "book " . $lineUrl . "\n";
-			//processBook($lineUrl);
+			processBook($lineUrl);
 		}
 	}
 }
