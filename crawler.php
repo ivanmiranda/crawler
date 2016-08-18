@@ -56,7 +56,6 @@ class Crawler extends \stdClass {
 		if (strlen(trim($content['html']))) {
 			return str_get_html($content['html']);
 		} else {
-			var_dump($url);
 			return false;
 		}
 	}
