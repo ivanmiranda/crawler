@@ -17,13 +17,11 @@ function getContent($url) {
 
 function process($url) {
 	if($dom = str_get_html(getContent($url))) {
-		if (PHP_SAPI == "cli") $lb = "\n"; 
-		else $lb = "<br />"; 
-		//echo "--> {$url}".$lb; 
 	    foreach ($dom->find('div[class=s-item-container]') as $item) {
 	      	$autor = '';
 	      	foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $url) {
-	      		if($details = str_get_html(getContent($url->attr['href']))) {
+	      		$details = str_get_html(getContent($url->attr['href']))
+	      		if(trim($details != '')) {
 		      		$book = [];
 					foreach($details->find('span[id=productTitle]') as $data) {
 						$book['title'] = trim(html_entity_decode($data->innertext));
