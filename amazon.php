@@ -74,7 +74,7 @@ function processPage($url) {
 			}
 		}
 	} else {
-		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
+		file_put_contents("./amazon_pendientes.txt", $url."\n", FILE_APPEND);
 	}
 	flush();
 }
@@ -101,7 +101,7 @@ while(file_exists($archivoLigas)) {
 			}
 		}
 	}
-	fclose($handle);
-	unlink($archivoLigas);
-	rename($archivoPendientes, $archivoLigas);
 }
+fclose($handle);
+unlink($archivoLigas);
+rename($archivoPendientes, $archivoLigas);
