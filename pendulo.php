@@ -48,12 +48,12 @@ function processBook($url) {
 			}
 		}
 		if (isset($book['title'])) {
-				file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
+				file_put_contents("./pendulo.json", json_encode($book) . "\n", FILE_APPEND);
 		} else {
-			file_put_contents("./amazon_pendientes.txt", $url . "\n", FILE_APPEND);
+			file_put_contents("./pendulo_pendientes.txt", $url . "\n", FILE_APPEND);
 		}
 	} else {
-		file_put_contents("./amazon_pendientes.txt", $url . "\n", FILE_APPEND);
+		file_put_contents("./pendulo_pendientes.txt", $url . "\n", FILE_APPEND);
 	}
 }
 
@@ -62,41 +62,29 @@ function processPage($url) {
 	if (strlen(trim($contentPage)) == 0) {
 		$contentPage = trim(file_get_contents($url));
 	}
+	var_dump($contentPage);die();
 	if(($dom = str_get_html($contentPage)) === false) {
-		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
+		file_put_contents("./pendulo_pendientes.txt",$url."\n", FILE_APPEND);
 		return false;
 	}
-	if (strlen(trim($contentPage)) != 4821) {
-		foreach ($dom->find('div[class=s-item-container]') as $item) {
-			$autor = '';
-			foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $urlBook) {
-				processBook(html_entity_decode($urlBook->attr['href']));
-			}
+	foreach ($dom->find('div[class=articulo_resultado]') as $item) {
+		foreach ($item->find('h4') as $data) {
+			var_dump($data->innerText);
 		}
-	} else {
-		file_put_contents("./amazon_pendientes.txt", $url."\n", FILE_APPEND);
 	}
 	flush();
 }
 
-$archivoLigas = "./amazon_ligas.txt";
-$archivoPendientes = "./amazon_pendientes.txt";
+$archivoLigas = "./pendulo_ligas.txt";
+$archivoPendientes = "./pendulo_pendientes.txt";
 while(file_exists($archivoLigas)) {
 	$handle = fopen($archivoLigas, "r");
 	if ($handle) {
 		while (($lineUrl = fgets($handle)) !== false) {
 			if (strlen(trim($lineUrl)) > 0) {
-				if (strpos($lineUrl,'{{pagina}}')) {
-					for ($i=1; $i < 401 ; $i++) { 
-						$url = str_replace('{{pagina}}', $i, $lineUrl);
-						processPage(html_entity_decode($url));
-					}
-				} else {
-					if (strpos($lineUrl,'ref=sr_pg')) {
-						processPage(html_entity_decode($lineUrl));
-					} else {
-						processBook(html_entity_decode($lineUrl));
-					}
+				for ($i=1; $i < 2 ; $i++) { 
+					$url = str_replace('{{pagina}}', $i, $lineUrl);
+					processPage(html_entity_decode($url));
 				}
 			}
 		}
