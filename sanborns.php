@@ -45,7 +45,7 @@ function processPage($url) {
 
 $archivoLigas = "./sanborns_ligas.txt";
 $archivoPendientes = "./sanborns_pendientes.txt";
-//while(file_exists($archivoLigas)) {
+while(file_exists($archivoLigas)) {
 	$handle = fopen($archivoLigas, "r");
 	if ($handle) {
 		while (($lineUrl = fgets($handle)) !== false) {
@@ -57,7 +57,7 @@ $archivoPendientes = "./sanborns_pendientes.txt";
 			}
 		}
 	}
-//	fclose($handle);
-//	unlink($archivoLigas);
-//	rename($archivoPendientes, $archivoLigas);
-//}
+	fclose($handle);
+	unlink($archivoLigas);
+	rename($archivoPendientes, $archivoLigas);
+}
