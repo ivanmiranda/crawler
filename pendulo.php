@@ -57,7 +57,7 @@ while(file_exists($archivoLigas)) {
 	if ($handle) {
 		while (($lineUrl = fgets($handle)) !== false) {
 			if (strlen(trim($lineUrl)) > 0) {
-				for ($i=1; $i < 2 ; $i++) { 
+				for ($i=1; $i < 51 ; $i++) { 
 					$url = str_replace('{{pagina}}', $i, $lineUrl);
 					processPage(html_entity_decode($url));
 				}
