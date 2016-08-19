@@ -40,6 +40,9 @@ function processPage($url) {
 				$book['publisher'] = trim(html_entity_decode($data->title));
 			}
 		}
+		foreach ($item->find('p[class=precio_mt]span') as $data) {
+			$book['price'] = str_replace('MX', '', $data->innertext);
+		}
 		if (isset($book['isbn13'])) {
 			file_put_contents("./pendulo.json", json_encode($book) . "\n", FILE_APPEND);
 		}
@@ -54,7 +57,7 @@ while(file_exists($archivoLigas)) {
 	if ($handle) {
 		while (($lineUrl = fgets($handle)) !== false) {
 			if (strlen(trim($lineUrl)) > 0) {
-				for ($i=1; $i < 51 ; $i++) { 
+				for ($i=1; $i < 2 ; $i++) { 
 					$url = str_replace('{{pagina}}', $i, $lineUrl);
 					processPage(html_entity_decode($url));
 				}
