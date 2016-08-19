@@ -50,9 +50,13 @@ while(file_exists($archivoLigas)) {
 	if ($handle) {
 		while (($lineUrl = fgets($handle)) !== false) {
 			if (strlen(trim($lineUrl)) > 0) {
-				for ($i=1; $i < 20 ; $i++) { 
-					$url = str_replace('{{pagina}}', $i, $lineUrl);
-					processPage(html_entity_decode($url));
+				if (strpos($lineUrl,'{{pagina}}')) {
+					for ($i=1; $i < 20 ; $i++) { 
+						$url = str_replace('{{pagina}}', $i, $lineUrl);
+						processPage(html_entity_decode($url));
+					}
+				} else {
+					processPage(html_entity_decode($lineUrl));
 				}
 			}
 		}
