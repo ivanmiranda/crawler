@@ -37,7 +37,7 @@ function processBook($url) {
 			}
 			$intPosicion++;
 		}
-		foreach($details->find('span[class=azul]') as $data) {
+		foreach($details->find('span[class=Azul]') as $data) {
 			$book['price'] = trim(str_replace('$', '', html_entity_decode($data->innertext)));
 		}
 		if (isset($book['title'])) {
