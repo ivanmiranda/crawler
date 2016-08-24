@@ -1,0 +1,1 @@
+https://www.elsotano.com/libros.php?page={{pagina}}
