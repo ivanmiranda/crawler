@@ -26,7 +26,7 @@ function processBook($url) {
 			foreach($container->find('div[class=comprar]') as $row) {
 				$data = $row->find('a', 0);
 				$book['isbn13'] = trim(html_entity_decode($data->getAttribute('data-generico')));
-				if (trim($book['isbn13']) != '') {
+				if (trim($book['isbn13']) == '') {
 					$book['isbn13'] = trim(html_entity_decode($data->getAttribute('data-isbnebook')));
 				}
 				$book['title'] = trim(html_entity_decode($data->getAttribute('data-title')));
