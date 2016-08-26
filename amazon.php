@@ -1,107 +1,44 @@
-<?php 
+<?php
 error_reporting(E_ERROR | E_PARSE);
 set_time_limit(50000); 
 
-include("./simple_html_dom.php");
+require_once __DIR__ . '/vendor/autoload.php';
 
-function getContent($url) {
-	$ch = curl_init();
-	$timeout = 100;
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-	$data = curl_exec($ch);
-	curl_close($ch);
-	return $data;
-}
-
-function processBook($url) {
-	$contentBook = getContent($url);
-	if (strlen(trim($contentBook)) == 0) {
-		$contentBook = trim(file_get_contents($url));
-	}
-	if ($details = str_get_html($contentBook)) {
-		$book = [];
-		foreach($details->find('span[id=productTitle]') as $data) {
-			$book['title'] = trim(html_entity_decode($data->innertext));
-		}
-		foreach($details->find('span[class=author]') as $data) {
-			foreach ($data->find('a') as $extra) {
-				$autor .= trim(str_replace(","," ",str_replace("<b>", "", html_entity_decode($extra->innertext))))." , ";
-			}
-		}
-		$book['author'] = $autor;
-		foreach($details->find('span[class=a-size-medium a-color-price offer-price a-text-normal]') as $data) {
-			$book['price'] = trim(str_replace('$', '', html_entity_decode($data->innertext)));
-		}
-		foreach($details->find('td[class=bucket]') as $data) {
-			foreach ($data->find('li') as $extra) {
-				if(strstr($extra->innertext, 'ISBN-10')){
-					$book['isbn10'] = trim(str_replace('<b>ISBN-10:</b>', '', html_entity_decode($extra->innertext)));
-				}
-				if(strstr($extra->innertext, 'ISBN-13')){
-					$book['isbn13'] = trim(str_replace('<b>ISBN-13:</b>', '', html_entity_decode($extra->innertext)));
-				}
-				if(strstr($extra->innertext, 'Editor')){
-					$book['publisher'] = trim(str_replace('<b>Editor:</b>', '', html_entity_decode($extra->innertext)));
-				}
-			}
-		}
-		if (isset($book['title'])) {
-				file_put_contents("./amazon.json", json_encode($book) . "\n", FILE_APPEND);
-		} else {
-			file_put_contents("./amazon_pendientes.txt", $url . "\n", FILE_APPEND);
-		}
-	} else {
-		file_put_contents("./amazon_pendientes.txt", $url . "\n", FILE_APPEND);
-	}
-}
+use Sincco\Tools\Curl;
 
 function processPage($url) {
-	$contentPage = getContent($url);
-	if (strlen(trim($contentPage)) == 0) {
-		$contentPage = trim(file_get_contents($url));
-	}
-	if(($dom = str_get_html($contentPage)) === false) {
-		file_put_contents("./amazon_pendientes.txt",$url."\n", FILE_APPEND);
-		return false;
-	}
-	if (strlen(trim($contentPage)) != 4821) {
-		foreach ($dom->find('div[class=s-item-container]') as $item) {
-			$autor = '';
-			foreach ($item->find('a[class=a-link-normal s-access-detail-page  a-text-normal]') as $urlBook) {
-				processBook(html_entity_decode($urlBook->attr['href']));
+	$curl = new \Sincco\Tools\Curl;
+	$curl->addOption(CURLOPT_CONNECTTIMEOUT, 100);
+	$domPage = $curl->getDom($url);
+	foreach ($domPage->find('div[class=s-item-container] a[class=a-link-normal s-access-detail-page  a-text-normal]') as $item) {
+		$book = [];
+		$domBook = $curl->getDom(html_entity_decode($item->attr['href']));
+		$book['title'] = trim(html_entity_decode($domBook->find('span[id=productTitle]', 0)->innertext));
+		$book['author'] = trim(html_entity_decode($domBook->find('span[class=author] a', 0)->innertext));
+		$book['price'] = str_replace('$', '', trim(html_entity_decode($domBook->find('span[class=a-size-medium a-color-price offer-price a-text-normal]', 0)->innertext)));
+		foreach ($domBook->find('td[class=bucket] li') as $data) {
+			if(strstr($data->innertext, 'ISBN-10')){
+				$book['isbn10'] = trim(str_replace('<b>ISBN-10:</b>', '', html_entity_decode($data->innertext)));
+			}
+			if(strstr($data->innertext, 'ISBN-13')){
+				$book['isbn13'] = str_replace('-', '', trim(str_replace('<b>ISBN-13:</b>', '', html_entity_decode($data->innertext))));
+			}
+			if(strstr($data->innertext, 'Editor')){
+				$book['publisher'] = trim(str_replace('<b>Editor:</b>', '', html_entity_decode($data->innertext)));
 			}
 		}
-	} else {
-		file_put_contents("./amazon_pendientes.txt", $url."\n", FILE_APPEND);
+		if (trim($book['isbn13']) != '') {
+			file_put_contents("./amazon.data", json_encode($book) . "\n", FILE_APPEND);
+		}
 	}
 	flush();
 }
 
-$archivoLigas = "./amazon_ligas.txt";
-$archivoPendientes = "./amazon_pendientes.txt";
-while(file_exists($archivoLigas)) {
-	$handle = fopen($archivoLigas, "r");
-	if ($handle) {
-		while (($lineUrl = fgets($handle)) !== false) {
-			if (strlen(trim($lineUrl)) > 0) {
-				if (strpos($lineUrl,'{{pagina}}')) {
-					for ($i=1; $i < 401 ; $i++) { 
-						$url = str_replace('{{pagina}}', $i, $lineUrl);
-						processPage(html_entity_decode($url));
-					}
-				} else {
-					if (strpos($lineUrl,'ref=sr_pg')) {
-						processPage(html_entity_decode($lineUrl));
-					} else {
-						processBook(html_entity_decode($lineUrl));
-					}
-				}
-			}
-		}
+$handle = fopen('./amazon.txt', 'r');
+while (($lineUrl = fgets($handle)) !== false) {
+	for ($i=2; $i < 401 ; $i++) { 
+		$url = html_entity_decode(str_replace('{{pagina}}', $i, trim($lineUrl)));
+		processPage($url);
 	}
-	fclose($handle);
-	unlink($archivoLigas);
-	rename($archivoPendientes, $archivoLigas);
 }
+fclose($handle);

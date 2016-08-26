@@ -1,6 +1,5 @@
-amazon.json
+*.data
 *.tmp
 *.txt
+*.lock
 vendor/
-composer.lock
-cache/

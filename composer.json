@@ -1,17 +1,11 @@
 {
-    "name": "sincco/crawler",
-    "description": "Crawler",
-    "license": "MIT",
-    "keywords": ["crawler","sincco"],
-    "version": "0.1",
-    "authors": [
+    "repositories": [
         {
-            "name": "Ivan Miranda",
-            "email": "ivan.miranda@sincco.com"
+            "type": "vcs",
+            "url": "git@github.com:sincco/curl.git"
         }
     ],
     "require": {
-        "php": "^5.5 || ^7.0",
-        "desarrolla2/cache":  "~2.0"
+        "sincco/curl": "dev-master"
     }
 }
